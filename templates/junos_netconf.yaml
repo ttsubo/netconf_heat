@@ -1,0 +1,133 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Netconf for Junos
+
+parameters:
+  router_ipaddr:
+    description: Ip address of the JUNOS Router.
+    label: Ip address of the device.
+    type: string
+  router_port:
+    description: Port of the JUNOS Router.
+    label: Port of the ssh connection.
+    type: number
+  username:
+    description: UserName for connecting JUNOS Router.
+    label: User name to log on to device.
+    type: string
+  password:
+    description: Password for connecting JUNOS Router.
+    label: Users password.
+    type: string
+  group_name:
+    description: Group Name for protocols.)
+    label: Group name.
+    type: string
+  bgp_type:
+    description: Type of bgp peering.)
+    label: bgp_type.
+    type: string
+  policy_statement:
+    description: Name of policy statement.)
+    label: policy_statement.
+    type: string
+  neighbor:
+    description: neighbor address for peering.)
+    label: neighbor.
+    type: string
+  peer_as:
+    description: AS number for peering.)
+    label: peer_as.
+    type: string
+  router_id:
+    description: router_id.)
+    label: router_id.
+    type: string
+  my_as:
+    description: AS number for myself.)
+    label: my_as.
+    type: string
+  static_route:
+    description: prefix for static route.)
+    label: static_route.
+    type: string
+  next_hop:
+    description: next_hop.)
+    label: next_hop.
+    type: string
+  policy_name:
+    description: policy_name.)
+    label: policy_name.
+    type: string
+
+
+
+resources:
+  protocols:
+    properties:
+      router_ipaddr:
+        get_param: router_ipaddr
+      port:
+        get_param: router_port
+      username:
+        get_param: username
+      password:
+        get_param: password
+      group_name:
+        get_param: group_name
+      bgp_type:
+        get_param: bgp_type
+      policy_statement:
+        get_param: policy_statement
+      neighbor:
+        get_param: neighbor
+      peer_as:
+        get_param: peer_as
+    depends_on: [routing-options, policy-options]
+    type: OS::Netconf::ProtocolsResource
+
+  routing-options:
+    properties:
+      router_ipaddr:
+        get_param: router_ipaddr
+      port:
+        get_param: router_port
+      username:
+        get_param: username
+      password:
+        get_param: password
+      static_route:
+        get_param: static_route
+      next_hop:
+        get_param: next_hop
+      router_id:
+        get_param: router_id
+      my_as:
+        get_param: my_as
+    type: OS::Netconf::RoutingOptionsResource
+
+  policy-options:
+    properties:
+      router_ipaddr:
+        get_param: router_ipaddr
+      port:
+        get_param: router_port
+      username:
+        get_param: username
+      password:
+        get_param: password
+      policy_name:
+        get_param: policy_name
+    type: OS::Netconf::PolicyOptionsResource
+
+outputs:
+  display_protocols:
+    description: display config_protocols
+    value: { get_attr: [ protocols, config_protocols ] }
+  display_routing_options:
+    description: display config_routing_options
+    value: { get_attr: [ routing-options, config_routing_options ] }
+  display_policy_options:
+    description: display config_policy_options
+    value: { get_attr: [ policy-options, config_policy_options ] }
